@@ -12,8 +12,9 @@ const history= useHistory()
       <div>
         <p className="car-image-container">
           <img src={CarImage} alt="IMG" />
+          <p className="price-class"> {price} </p>
         </p>
-        <p> {price} </p>
+       
       </div>
       <div className="content-wrapper">
         <p>{name}</p>

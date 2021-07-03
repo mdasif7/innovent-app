@@ -1,23 +1,31 @@
-.card-container{
-    width: 220px;
-    border: 1px solid #e8e1e1;
-    margin: 20px;
-    text-align: left;
-    box-shadow: burlywood;
-   
-    border-radius: 10px;
-.car-image-container{
-    margin: 0;
-    img {
-        max-width: 220px;
-        border-radius: 10px 10px 0 0;
+.card-container {
+  width: 220px;
+  border: 1px solid #e8e1e1;
+  margin: 20px;
+  text-align: left;
+  box-shadow: burlywood;
 
+  border-radius: 10px;
+  .car-image-container {
+    margin: 0;
+    position: relative;
+    img {
+      max-width: 220px;
+      border-radius: 10px 10px 0 0;
     }
-}
-.content-wrapper{
+    .price-class {
+      position: absolute;
+      top: -4px;
+      left: 8px;
+      background: white;
+      border-radius: 35px;
+      padding: 5px;
+    }
+  }
+  .content-wrapper {
     padding: 10px;
     .more-details {
-        text-align: center;
+      text-align: center;
     }
-}
+  }
 }
