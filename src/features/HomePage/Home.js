@@ -18,7 +18,11 @@ const Home = () => {
     startIndex: 0,
     endIndex: NumberOfCars,
   });
-  const [searchObj, setSearchObj] = useState({ car: "", type: "" });
+  const [searchObj, setSearchObj] = useState({
+    car: "",
+    car_model_year: "",
+    car_model: "",
+  });
 
   useEffect(() => {
     dispatch({ type: "GET_ALL_CARS" });
@@ -37,7 +41,10 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    if (searchObj && searchObj.car) {
+    if (
+      searchObj &&
+      (searchObj.car || searchObj.car_model || searchObj.car_model_year)
+    ) {
       setDisplayCars(
         filterCarsList.slice(indexes.startIndex, indexes.endIndex)
       );
@@ -48,77 +55,116 @@ const Home = () => {
   useEffect(() => {
     setDisplayCars(totalCar.slice(indexes.startIndex, indexes.endIndex));
     setTotalDisplayCars(totalCar);
+    setfilterCarsList(totalCar);
   }, [totalCar]);
 
   useEffect(() => {
     window.addEventListener("scroll", onCarContainerScroll);
   }, [displayCars]);
+  useEffect(() => {
+    if (
+      searchObj &&
+      (searchObj.car || searchObj.car_model || searchObj.car_model_year)
+    ) {
+      filterList();
+    } else {
+      setDisplayCars(totalCar.slice(indexes.startIndex, indexes.endIndex));
+      setTotalDisplayCars(totalCar);
+      setfilterCarsList(totalCar);
+    }
+  }, [searchObj.car, searchObj.car_model, searchObj.car_model_year]);
   let timer;
   const onSearchCars = (type, e) => {
     if (timer) {
       clearTimeout(timer);
     }
     if (e.target.value === "") {
-      setDisplayCars(totalCar.slice(indexes.startIndex, indexes.endIndex));
+      // setDisplayCars(totalCar.slice(indexes.startIndex, indexes.endIndex));
+      let obj = {...searchObj};
+      obj[type] = "";
+      setSearchObj(obj);
     } else {
-      timer = setTimeout(callChangeList(e), 1000);
+      // timer = setTimeout(callChangeList(e.target.value, "car"), 1000);
+      let obj = {...searchObj};
+      obj[type] = e.target.value;
+      setSearchObj(obj);
     }
   };
+  const filterList = () => {
+    let filterList =[...totalCar];
+    Object.keys(searchObj).forEach((key) => {
+      if(searchObj[key]){
+        filterList = filterList.filter((item) =>
+        item[key]
+          .toString()
+          .toLowerCase()
+          .includes(searchObj[key].toString().toLowerCase())
+      );
+      }
+      
+    });
 
-  const callChangeList = (e) => {
-    let filterList = totalCar.filter((item) =>
-      item.car.toLowerCase().includes(e.target.value.toLowerCase())
-    );
     setfilterCarsList(filterList);
-    setSearchObj({ ...searchObj, car: e.target.value });
     setDisplayCars(filterList.slice(0, NumberOfCars));
     setIndexes({ startIndex: 0, endIndex: NumberOfCars });
   };
+  const onDropdownChange = (identifier, e, newValue) => {
+    let obj = { ...searchObj };
+    if (newValue && newValue[identifier]) {
+      obj[identifier] = newValue[identifier].toString();
+    } else {
+      obj[identifier] = "";
+    }
+    setSearchObj(obj);
+  };
   return (
     <div className="homePage-wrapper">
-      Home Page
       <div className="search-container">
         <div className="search-fields-container">
-        <div className="search-fields">
-          Price Model:{" "}
-          <Autocomplete
-            id="combo-box-demo"
-            options={totalCar}
-            getOptionLabel={(option) => option.car_model}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Price" variant="outlined" />
-            )}
-          />
-        </div>
-        <div className="search-fields">
-          Pick Year :
-          <Autocomplete
-            id="combo-box-demo"
-            options={totalCar}
-            getOptionLabel={(option) => option.car_model_year.toString()}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Year" variant="outlined" />
-            )}
-          />
-        </div>
+          <div className="search-fields">
+            Price Model:{" "}
+            <Autocomplete
+              id="combo-box-demo"
+              options={totalCar}
+              getOptionLabel={(option) => option.car_model}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Model" variant="outlined" />
+              )}
+              onChange={(event, newValue) =>
+                onDropdownChange("car_model", event, newValue)
+              }
+            />
+          </div>
+          <div className="search-fields">
+            Pick Year :
+            <Autocomplete
+              id="combo-box-demo"
+              options={totalCar}
+              getOptionLabel={(option) => option.car_model_year.toString()}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Year" variant="outlined" />
+              )}
+              onChange={(event, newValue) =>
+                onDropdownChange("car_model_year", event, newValue)
+              }
+            />
+          </div>
 
-        <div className="search-fields">
-          Car:{" "}
-          <p>
-          <TextField
-            id="outlined-search"
-            label="Search Car"
-            type="search"
-            variant="outlined"
-            onChange={(e) => onSearchCars("car", e)}
-          />
-          </p>
-         
+          <div className="search-fields">
+            Car:{" "}
+            <p>
+              <TextField
+                id="outlined-search"
+                label="Search Car"
+                type="search"
+                variant="outlined"
+                onChange={(e) => onSearchCars("car", e)}
+              />
+            </p>
+          </div>
         </div>
-        </div>
-       
       </div>
       <div id="cars-wrapper" className="cars-wrapper">
         {displayCars &&
