@@ -1,0 +1,23 @@
+  .car-details-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 700px;
+    .car-image-container{
+        flex: 1;
+        img {
+            width: 500px;
+    height: 500px;
+    margin-right: 20px;
+        }
+    }
+    .details-content-wrapper{
+        flex:1;
+        height: 500px;
+        text-align: left;
+        .details-button {
+          display: flex;
+    justify-content: space-evenly;
+        }
+    }
+  }
